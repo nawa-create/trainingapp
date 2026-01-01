@@ -1599,6 +1599,138 @@ textarea {
     border-radius: 2px;
 }
 
+/* ==================== Routine Execution Screen ==================== */
+.routine-run-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px;
+}
+
+.routine-progress {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.routine-progress span {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--glass-bg);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-accent);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.routine-exercises-run {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.routine-exercise-run-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px var(--glass-shadow);
+}
+
+.routine-exercise-run-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-shine);
+    pointer-events: none;
+}
+
+.routine-exercise-run-item:active {
+    transform: scale(0.98);
+    background: var(--glass-bg-strong);
+}
+
+.routine-exercise-run-item.completed {
+    opacity: 0.6;
+    background: rgba(125, 211, 168, 0.1);
+    border-color: rgba(125, 211, 168, 0.3);
+}
+
+.routine-exercise-run-item.completed .exercise-status {
+    background: var(--success);
+}
+
+.exercise-status {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--glass-bg-strong);
+    border: 2px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.exercise-status svg {
+    width: 18px;
+    height: 18px;
+    stroke: white;
+    display: none;
+}
+
+.routine-exercise-run-item.completed .exercise-status svg {
+    display: block;
+}
+
+.routine-exercise-run-info {
+    flex: 1;
+}
+
+.routine-exercise-run-info h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    position: relative;
+}
+
+.routine-exercise-run-info span {
+    font-size: 13px;
+    color: var(--text-muted);
+    position: relative;
+}
+
+.routine-exercise-run-item > svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    position: relative;
+    flex-shrink: 0;
+}
+
 /* ==================== Safe Areas ==================== */
 @supports (padding: max(0px)) {
     .app-header {

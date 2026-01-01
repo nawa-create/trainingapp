@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#1a1a2e">
     <title>FORGE</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="assets/icons/icon-192.svg">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.jpg">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -126,6 +126,28 @@
                 </button>
             </header>
             <div class="routines-list" id="routines-list"></div>
+        </div>
+
+        <!-- Routine Execution Screen -->
+        <div id="routine-run-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" id="routine-run-back-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1 id="routine-run-title">ルーティン</h1>
+                <button id="routine-run-done-btn" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                </button>
+            </header>
+            <div class="routine-run-content">
+                <div class="routine-progress">
+                    <span id="routine-progress-text">0 / 0 完了</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="routine-progress-fill"></div>
+                    </div>
+                </div>
+                <div class="routine-exercises-run" id="routine-exercises-run"></div>
+            </div>
         </div>
 
         <!-- Exercise Select Screen -->

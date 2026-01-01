@@ -5,7 +5,7 @@ class ForgeApp {
         this.currentScreen = 'home';
         this.currentExercise = null;
         this.currentRoutine = null;
-        this.routineExerciseIndex = 0;
+        this.completedRoutineExercises = []; // 完了した種目のIDを追跡
         this.currentSets = [];
         this.selectedMuscleGroup = null;
         this.editingRoutine = null;
@@ -143,6 +143,15 @@ class ForgeApp {
         // Routine Screen
         document.getElementById('add-routine-btn').addEventListener('click', () => {
             this.createNewRoutine();
+        });
+
+        // Routine Run Screen
+        document.getElementById('routine-run-back-btn').addEventListener('click', () => {
+            this.exitRoutineRun();
+        });
+
+        document.getElementById('routine-run-done-btn').addEventListener('click', () => {
+            this.finishRoutine();
         });
 
         // Routine Edit Screen
@@ -559,25 +568,21 @@ class ForgeApp {
                 exerciseName: this.currentExercise.name,
                 sets: [...this.currentSets]
             });
+
+            // ルーティン中の場合、完了した種目として記録
+            if (this.currentRoutine && !this.completedRoutineExercises.includes(this.currentExercise.id)) {
+                this.completedRoutineExercises.push(this.currentExercise.id);
+            }
         }
 
         // タイマーを停止
         timer.stop();
         document.getElementById('timer-overlay').classList.add('hidden');
 
-        // ルーティン中の場合
+        // ルーティン中の場合はルーティン実行画面に戻る
         if (this.currentRoutine) {
-            this.routineExerciseIndex++;
-            if (this.routineExerciseIndex < this.currentRoutine.exercises.length) {
-                // 次の種目へ
-                const nextExerciseId = this.currentRoutine.exercises[this.routineExerciseIndex];
-                this.startExercise(nextExerciseId);
-                return;
-            } else {
-                // ルーティン完了
-                this.currentRoutine = null;
-                this.routineExerciseIndex = 0;
-            }
+            this.showRoutineRunScreen();
+            return;
         }
 
         // ホームに戻る
@@ -727,8 +732,86 @@ class ForgeApp {
             return;
         }
 
-        this.routineExerciseIndex = 0;
-        this.startExercise(this.currentRoutine.exercises[0]);
+        // 完了した種目をリセット
+        this.completedRoutineExercises = [];
+
+        // ルーティン実行画面を表示
+        this.showRoutineRunScreen();
+    }
+
+    showRoutineRunScreen() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('routine-run-screen').classList.add('active');
+
+        document.getElementById('routine-run-title').textContent = this.currentRoutine.name;
+        this.renderRoutineRunExercises();
+    }
+
+    renderRoutineRunExercises() {
+        const container = document.getElementById('routine-exercises-run');
+        const exercises = Storage.getAllExercises();
+        const total = this.currentRoutine.exercises.length;
+        const completed = this.completedRoutineExercises.length;
+
+        // プログレス更新
+        document.getElementById('routine-progress-text').textContent = `${completed} / ${total} 完了`;
+        document.getElementById('routine-progress-fill').style.width = `${(completed / total) * 100}%`;
+
+        container.innerHTML = this.currentRoutine.exercises.map(exerciseId => {
+            const exercise = exercises.find(e => e.id === exerciseId);
+            if (!exercise) return '';
+
+            const isCompleted = this.completedRoutineExercises.includes(exerciseId);
+            const lastRecord = Storage.getLastRecord(exerciseId);
+            let lastRecordText = '記録なし';
+            if (lastRecord && lastRecord.sets && lastRecord.sets.length > 0) {
+                const set = lastRecord.sets[0];
+                lastRecordText = `前回: ${set.weight}kg × ${set.reps}回`;
+            }
+
+            return `
+                <div class="routine-exercise-run-item ${isCompleted ? 'completed' : ''}" data-id="${exerciseId}">
+                    <div class="exercise-status">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <path d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <div class="routine-exercise-run-info">
+                        <h4>${exercise.name}</h4>
+                        <span>${lastRecordText}</span>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </div>
+            `;
+        }).join('');
+
+        // クリックイベント
+        container.querySelectorAll('.routine-exercise-run-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const exerciseId = item.dataset.id;
+                this.startExerciseFromRoutine(exerciseId);
+            });
+        });
+    }
+
+    startExerciseFromRoutine(exerciseId) {
+        this.startExercise(exerciseId);
+    }
+
+    exitRoutineRun() {
+        if (confirm('ルーティンを終了しますか？')) {
+            this.currentRoutine = null;
+            this.completedRoutineExercises = [];
+            this.navigateTo('home');
+        }
+    }
+
+    finishRoutine() {
+        this.currentRoutine = null;
+        this.completedRoutineExercises = [];
+        this.navigateTo('home');
     }
 
     createNewRoutine() {
