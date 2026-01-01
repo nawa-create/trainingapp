@@ -765,12 +765,12 @@ textarea {
 .input-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 16px;
     margin-bottom: 20px;
 }
 
 .input-group {
-    min-width: 0; /* Prevent overflow */
+    min-width: 0;
 }
 
 .input-group label {
@@ -785,17 +785,17 @@ textarea {
 .input-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .input-controls input {
     flex: 1;
-    min-width: 0; /* KEY FIX: Prevent input from overflowing */
+    min-width: 50px;
     width: 100%;
     text-align: center;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 600;
-    padding: 14px 8px;
+    padding: 12px 4px;
     border-radius: var(--radius);
     -moz-appearance: textfield;
 }
@@ -808,15 +808,15 @@ textarea {
 
 .adjust-btn {
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     background: var(--glass-bg-strong);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-full);
     color: var(--text-primary);
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 300;
     cursor: pointer;
     display: flex;
