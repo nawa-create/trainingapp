@@ -1,45 +1,45 @@
 /* FORGE - Liquid Glass Design v2 */
 
 :root {
-    /* Color palette from image */
-    --deep-purple: #363237;
-    --indigo: #2D4262;
-    --taupe: #73605B;
-    --blush: #D09683;
+    /* Color palette - mist/stone/shadow/autumn */
+    --mist: #90AFC5;
+    --stone: #336B87;
+    --shadow: #2A3132;
+    --autumn: #763626;
 
     /* Base colors */
-    --bg-primary: #1a1a24;
-    --bg-secondary: #252532;
+    --bg-primary: #1e2627;
+    --bg-secondary: #2A3132;
 
     /* Liquid Glass effects - Enhanced */
-    --glass-bg: rgba(45, 66, 98, 0.15);
-    --glass-bg-strong: rgba(45, 66, 98, 0.25);
-    --glass-bg-light: rgba(208, 150, 131, 0.08);
-    --glass-border: rgba(208, 150, 131, 0.15);
-    --glass-border-light: rgba(208, 150, 131, 0.25);
-    --glass-highlight: rgba(255, 255, 255, 0.12);
-    --glass-highlight-strong: rgba(255, 255, 255, 0.2);
-    --glass-shadow: rgba(54, 50, 55, 0.5);
+    --glass-bg: rgba(51, 107, 135, 0.15);
+    --glass-bg-strong: rgba(51, 107, 135, 0.25);
+    --glass-bg-light: rgba(144, 175, 197, 0.08);
+    --glass-border: rgba(144, 175, 197, 0.2);
+    --glass-border-light: rgba(144, 175, 197, 0.3);
+    --glass-highlight: rgba(144, 175, 197, 0.15);
+    --glass-highlight-strong: rgba(144, 175, 197, 0.25);
+    --glass-shadow: rgba(42, 49, 50, 0.6);
     --glass-blur: 24px;
     --glass-blur-strong: 48px;
 
     /* Gradient accents */
-    --accent-primary: #D09683;
-    --accent-secondary: #73605B;
-    --gradient-accent: linear-gradient(135deg, #D09683 0%, #73605B 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(45, 66, 98, 0.3) 0%, rgba(54, 50, 55, 0.2) 100%);
-    --gradient-shine: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%);
-    --gradient-bg: radial-gradient(ellipse at top left, #2D4262 0%, #363237 40%, #1a1a24 100%);
+    --accent-primary: #90AFC5;
+    --accent-secondary: #336B87;
+    --gradient-accent: linear-gradient(135deg, #90AFC5 0%, #336B87 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(51, 107, 135, 0.3) 0%, rgba(42, 49, 50, 0.2) 100%);
+    --gradient-shine: linear-gradient(135deg, rgba(144, 175, 197, 0.2) 0%, rgba(144, 175, 197, 0) 50%);
+    --gradient-bg: radial-gradient(ellipse at top left, #336B87 0%, #2A3132 40%, #1e2627 100%);
 
     /* Text colors */
     --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.75);
-    --text-muted: rgba(255, 255, 255, 0.45);
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(144, 175, 197, 0.7);
 
     /* Status colors */
     --success: #7dd3a8;
-    --warning: #D09683;
-    --danger: #e57373;
+    --warning: #763626;
+    --danger: #763626;
 
     /* Spacing & Radius */
     --radius-sm: 14px;
@@ -83,9 +83,9 @@ body::before {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 15% 15%, rgba(45, 66, 98, 0.4) 0%, transparent 50%),
-        radial-gradient(circle at 85% 25%, rgba(208, 150, 131, 0.2) 0%, transparent 40%),
-        radial-gradient(circle at 50% 80%, rgba(115, 96, 91, 0.25) 0%, transparent 45%);
+        radial-gradient(circle at 15% 15%, rgba(51, 107, 135, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 85% 25%, rgba(144, 175, 197, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(118, 54, 38, 0.2) 0%, transparent 45%);
     animation: ambientPulse 15s ease-in-out infinite alternate;
     pointer-events: none;
     z-index: 0;
@@ -178,7 +178,7 @@ body::before {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 8px;
-    filter: drop-shadow(0 4px 20px rgba(208, 150, 131, 0.4));
+    filter: drop-shadow(0 4px 20px rgba(144, 175, 197, 0.4));
 }
 
 .tagline {
@@ -252,10 +252,10 @@ body::before {
 }
 
 .select-btn.active {
-    background: linear-gradient(135deg, rgba(208, 150, 131, 0.3) 0%, rgba(115, 96, 91, 0.2) 100%);
+    background: linear-gradient(135deg, rgba(144, 175, 197, 0.3) 0%, rgba(51, 107, 135, 0.2) 100%);
     border-color: var(--accent-primary);
     box-shadow:
-        0 8px 32px rgba(208, 150, 131, 0.3),
+        0 8px 32px rgba(144, 175, 197, 0.3),
         inset 0 1px 0 var(--glass-highlight-strong);
 }
 
@@ -287,7 +287,7 @@ select:focus,
 textarea:focus {
     border-color: var(--accent-primary);
     box-shadow:
-        0 0 0 3px rgba(208, 150, 131, 0.15),
+        0 0 0 3px rgba(144, 175, 197, 0.2),
         inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -310,7 +310,7 @@ textarea {
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow:
-        0 8px 24px rgba(208, 150, 131, 0.35),
+        0 8px 24px rgba(144, 175, 197, 0.35),
         inset 0 1px 0 rgba(255,255,255,0.2);
     position: relative;
     overflow: hidden;
@@ -335,7 +335,7 @@ textarea {
 
 .primary-btn:active:not(:disabled) {
     transform: scale(0.98);
-    box-shadow: 0 4px 16px rgba(208, 150, 131, 0.25);
+    box-shadow: 0 4px 16px rgba(144, 175, 197, 0.25);
 }
 
 .secondary-btn {
@@ -567,9 +567,9 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(208, 150, 131, 0.2) 0%, rgba(115, 96, 91, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(144, 175, 197, 0.2) 0%, rgba(51, 107, 135, 0.15) 100%);
     border-radius: var(--radius);
-    border: 1px solid rgba(208, 150, 131, 0.2);
+    border: 1px solid rgba(144, 175, 197, 0.2);
     box-shadow: inset 0 1px 0 var(--glass-highlight);
 }
 
@@ -588,13 +588,13 @@ textarea {
 
 /* Alerts */
 .alerts-section {
-    background: rgba(208, 150, 131, 0.1);
+    background: rgba(118, 54, 38, 0.15);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid rgba(208, 150, 131, 0.25);
+    border: 1px solid rgba(118, 54, 38, 0.35);
     border-radius: var(--radius-lg);
     padding: 18px;
-    box-shadow: 0 4px 20px rgba(208, 150, 131, 0.1);
+    box-shadow: 0 4px 20px rgba(118, 54, 38, 0.15);
 }
 
 .alerts-section h3 {
@@ -614,7 +614,7 @@ textarea {
     padding: 10px 0;
     font-size: 14px;
     color: var(--text-secondary);
-    border-bottom: 1px solid rgba(208, 150, 131, 0.15);
+    border-bottom: 1px solid rgba(118, 54, 38, 0.25);
 }
 
 .alert-item:last-child {
@@ -659,7 +659,7 @@ textarea {
 }
 
 .nav-btn.active svg {
-    filter: drop-shadow(0 0 10px rgba(208, 150, 131, 0.6));
+    filter: drop-shadow(0 0 10px rgba(144, 175, 197, 0.6));
 }
 
 .nav-btn svg {
@@ -716,10 +716,10 @@ textarea {
 }
 
 .muscle-group-btn.active {
-    background: linear-gradient(135deg, rgba(208, 150, 131, 0.25) 0%, rgba(115, 96, 91, 0.2) 100%);
+    background: linear-gradient(135deg, rgba(144, 175, 197, 0.25) 0%, rgba(51, 107, 135, 0.2) 100%);
     border-color: var(--accent-primary);
     color: white;
-    box-shadow: 0 4px 16px rgba(208, 150, 131, 0.25);
+    box-shadow: 0 4px 16px rgba(144, 175, 197, 0.25);
 }
 
 .exercises-list {
@@ -874,7 +874,7 @@ textarea {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 2px 10px rgba(208, 150, 131, 0.3));
+    filter: drop-shadow(0 2px 10px rgba(144, 175, 197, 0.3));
 }
 
 .input-row {
@@ -1000,7 +1000,7 @@ textarea {
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow:
-        0 8px 32px rgba(208, 150, 131, 0.4),
+        0 8px 32px rgba(144, 175, 197, 0.4),
         inset 0 1px 0 rgba(255,255,255,0.2);
     position: relative;
     overflow: hidden;
@@ -1019,7 +1019,7 @@ textarea {
 
 .record-btn:active {
     transform: scale(0.98);
-    box-shadow: 0 4px 20px rgba(208, 150, 131, 0.3);
+    box-shadow: 0 4px 20px rgba(144, 175, 197, 0.3);
 }
 
 /* Sets Done */
@@ -1059,7 +1059,7 @@ textarea {
     justify-content: center;
     font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(208, 150, 131, 0.3);
+    box-shadow: 0 4px 12px rgba(144, 175, 197, 0.3);
 }
 
 .set-done-details {
@@ -1125,7 +1125,7 @@ textarea {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 4px 30px rgba(208, 150, 131, 0.5));
+    filter: drop-shadow(0 4px 30px rgba(144, 175, 197, 0.5));
 }
 
 .timer-label {
@@ -1534,10 +1534,10 @@ textarea {
 }
 
 .rest-time-options button.active {
-    background: linear-gradient(135deg, rgba(208, 150, 131, 0.25) 0%, rgba(115, 96, 91, 0.2) 100%);
+    background: linear-gradient(135deg, rgba(144, 175, 197, 0.25) 0%, rgba(51, 107, 135, 0.2) 100%);
     border-color: var(--accent-primary);
     color: white;
-    box-shadow: 0 4px 16px rgba(208, 150, 131, 0.25);
+    box-shadow: 0 4px 16px rgba(144, 175, 197, 0.25);
 }
 
 /* ==================== Empty State ==================== */
