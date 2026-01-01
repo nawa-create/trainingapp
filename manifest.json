@@ -4,8 +4,8 @@
     "description": "筋トレ記録・管理アプリ",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#1a1a2e",
-    "theme_color": "#1a1a2e",
+    "background_color": "#1e2627",
+    "theme_color": "#336B87",
     "orientation": "portrait",
     "icons": [
         {
