@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>FORGE</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.svg">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Initial Setup Screen -->
+    <div id="setup-screen" class="screen">
+        <div class="setup-container">
+            <div class="logo">
+                <h1>FORGE</h1>
+                <p class="tagline">鍛え上げろ</p>
+            </div>
+            <div class="setup-form">
+                <div class="form-group">
+                    <label>トレーニング歴</label>
+                    <div class="select-buttons" id="experience-select">
+                        <button data-value="beginner" class="select-btn">初心者<span>〜1年</span></button>
+                        <button data-value="intermediate" class="select-btn">中級者<span>1〜3年</span></button>
+                        <button data-value="advanced" class="select-btn">上級者<span>3年〜</span></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>体重 (kg)</label>
+                    <input type="number" id="user-weight" placeholder="70" min="30" max="200" step="0.1">
+                </div>
+                <button id="setup-complete-btn" class="primary-btn" disabled>始める</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="hidden">
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <header class="app-header">
+                <h1>FORGE</h1>
+                <button id="settings-btn" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"></path>
+                    </svg>
+                </button>
+            </header>
+
+            <div class="home-content">
+                <!-- Today's Summary -->
+                <div class="today-summary">
+                    <h2>今日のトレーニング</h2>
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <span class="stat-value" id="today-volume">0</span>
+                            <span class="stat-label">総ボリューム (kg)</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="today-calories">0</span>
+                            <span class="stat-label">消費カロリー</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button id="start-routine-btn" class="action-btn">
+                        <div class="action-icon">📋</div>
+                        <span>ルーティンを開始</span>
+                    </button>
+                    <button id="start-free-btn" class="action-btn">
+                        <div class="action-icon">🏋️</div>
+                        <span>種目を選んで開始</span>
+                    </button>
+                </div>
+
+                <!-- Stagnation Alerts -->
+                <div id="stagnation-alerts" class="alerts-section hidden">
+                    <h3>⚠️ 停滞アラート</h3>
+                    <div id="alerts-list"></div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-btn active" data-screen="home">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    <span>ホーム</span>
+                </button>
+                <button class="nav-btn" data-screen="routines">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    <span>ルーティン</span>
+                </button>
+                <button class="nav-btn" data-screen="stats">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+                    <span>統計</span>
+                </button>
+                <button class="nav-btn" data-screen="history">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                    <span>履歴</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Routine Select Screen -->
+        <div id="routines-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" data-back="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1>ルーティン</h1>
+                <button id="add-routine-btn" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+            </header>
+            <div class="routines-list" id="routines-list"></div>
+        </div>
+
+        <!-- Exercise Select Screen -->
+        <div id="exercise-select-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" data-back="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1>種目選択</h1>
+                <button id="add-exercise-btn" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+            </header>
+            <div class="search-bar">
+                <input type="text" id="exercise-search" placeholder="種目を検索...">
+            </div>
+            <div class="muscle-groups" id="muscle-groups"></div>
+            <div class="exercises-list" id="exercises-list"></div>
+        </div>
+
+        <!-- Training Screen -->
+        <div id="training-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" id="training-back-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1 id="current-exercise-name">種目名</h1>
+                <button id="exercise-settings-btn" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+                    </svg>
+                </button>
+            </header>
+
+            <div class="training-content">
+                <!-- Past Records -->
+                <div class="past-records">
+                    <h3>過去の記録</h3>
+                    <div id="past-records-list"></div>
+                </div>
+
+                <!-- Current Set Input -->
+                <div class="current-set">
+                    <div class="set-number">
+                        <span>セット</span>
+                        <span id="current-set-num">1</span>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>重量 (kg)</label>
+                            <div class="input-controls">
+                                <button class="adjust-btn" data-target="weight" data-delta="-2.5">−</button>
+                                <input type="number" id="weight-input" step="0.5" value="0">
+                                <button class="adjust-btn" data-target="weight" data-delta="2.5">+</button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>レップ</label>
+                            <div class="input-controls">
+                                <button class="adjust-btn" data-target="reps" data-delta="-1">−</button>
+                                <input type="number" id="reps-input" step="1" value="0">
+                                <button class="adjust-btn" data-target="reps" data-delta="1">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Memo -->
+                    <div class="memo-section">
+                        <button id="toggle-memo-btn" class="memo-toggle">
+                            <span>メモ</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <textarea id="exercise-memo" class="hidden" placeholder="フォームの注意点など..."></textarea>
+                    </div>
+
+                    <!-- Record Button -->
+                    <button id="record-set-btn" class="record-btn">記録</button>
+                </div>
+
+                <!-- Sets Done -->
+                <div class="sets-done">
+                    <h3>完了セット</h3>
+                    <div id="sets-list"></div>
+                </div>
+            </div>
+
+            <!-- Timer Overlay -->
+            <div id="timer-overlay" class="timer-overlay hidden">
+                <div class="timer-content">
+                    <div class="timer-display">
+                        <span id="timer-value">0:00</span>
+                    </div>
+                    <p class="timer-label">休憩中</p>
+                    <button id="skip-timer-btn" class="skip-btn">スキップ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Screen -->
+        <div id="stats-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" data-back="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1>統計</h1>
+            </header>
+            <div class="stats-content">
+                <div class="stats-exercise-select">
+                    <label>種目を選択</label>
+                    <select id="stats-exercise-select"></select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="progress-chart"></canvas>
+                </div>
+                <div class="stats-summary" id="stats-summary"></div>
+            </div>
+        </div>
+
+        <!-- History Screen -->
+        <div id="history-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" data-back="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1>履歴</h1>
+            </header>
+            <div class="history-list" id="history-list"></div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" data-back="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1>設定</h1>
+            </header>
+            <div class="settings-content">
+                <div class="settings-group">
+                    <h3>プロフィール</h3>
+                    <div class="setting-item">
+                        <label>体重 (kg)</label>
+                        <input type="number" id="settings-weight" step="0.1">
+                    </div>
+                    <div class="setting-item">
+                        <label>トレーニング歴</label>
+                        <select id="settings-experience">
+                            <option value="beginner">初心者（〜1年）</option>
+                            <option value="intermediate">中級者（1〜3年）</option>
+                            <option value="advanced">上級者（3年〜）</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3>データ管理</h3>
+                    <button id="export-data-btn" class="secondary-btn">データをエクスポート</button>
+                    <button id="import-data-btn" class="secondary-btn">データをインポート</button>
+                    <button id="clear-data-btn" class="danger-btn">データを削除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Routine Edit Screen -->
+        <div id="routine-edit-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" data-back="routines">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1 id="routine-edit-title">ルーティン作成</h1>
+                <button id="save-routine-btn" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                </button>
+            </header>
+            <div class="routine-edit-content">
+                <div class="form-group">
+                    <label>ルーティン名</label>
+                    <input type="text" id="routine-name-input" placeholder="例: 胸の日">
+                </div>
+                <div class="routine-exercises">
+                    <h3>種目</h3>
+                    <div id="routine-exercises-list"></div>
+                    <button id="add-routine-exercise-btn" class="add-exercise-btn">+ 種目を追加</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise Settings Modal -->
+        <div id="exercise-settings-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>種目設定</h2>
+                <div class="form-group">
+                    <label>休憩時間</label>
+                    <div class="rest-time-options" id="rest-time-options">
+                        <button data-seconds="10">10秒</button>
+                        <button data-seconds="30">30秒</button>
+                        <button data-seconds="60">1分</button>
+                        <button data-seconds="90">1分半</button>
+                        <button data-seconds="120">2分</button>
+                        <button data-seconds="180">3分</button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="close-exercise-settings" class="secondary-btn">閉じる</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Custom Exercise Modal -->
+        <div id="add-exercise-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>カスタム種目追加</h2>
+                <div class="form-group">
+                    <label>種目名</label>
+                    <input type="text" id="custom-exercise-name" placeholder="種目名を入力">
+                </div>
+                <div class="form-group">
+                    <label>部位</label>
+                    <select id="custom-exercise-muscle"></select>
+                </div>
+                <div class="modal-actions">
+                    <button id="cancel-add-exercise" class="secondary-btn">キャンセル</button>
+                    <button id="confirm-add-exercise" class="primary-btn">追加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio for timer -->
+    <audio id="timer-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2JkpqgnZmUjo+UmZ2goJ2YkoyHgX15eHl8gYaLj5KVl5eWlJGOi4iFgn99fHx9f4KGiYyPkZOUlJOSkI6LiIWCf31bS0NAPEFGUmFueYKKjo+RkpKSko+LhoB4b2dgXFtdYGRpbnR5fYGEhoeFg398eHRxbm1sbW5wcnZ5fH+Bg4WEg4F+e3d0cW9ubW1ucHJ1eHt9gIKEhYWEgn97eHRxb21sbG1vcXR3en2AgYOFhYWDgX55dXJvbWxrbG5wd3t/hYmNjYqFfnRpYVlWV11mbnd+goWGhoaEgX14c25qZ2VlZmhrbXJ3fIGFiIqLiomGgn15dHBtamloaWptcHR4fYGFiIqLi4qIhYF9eHRwbWppaGhqbG9zeH2ChomLjIyLiYaCfnp1cW1qaGdnaWxvdHl+g4eKjI2NjImGgn56dnJuamlnZ2lrb3N4fYKGioyNjo2LiIR/e3ZybmtpZ2dpbG9zeHyChouMjo6NjImFgHt2cm5raWdnaGptcXV6f4OHi42Ojo2LiIR/e3ZybmtpZ2dpa21xdXt/" type="audio/wav">
+    </audio>
+
+    <script src="js/exercises.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
