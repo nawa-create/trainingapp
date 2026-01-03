@@ -1,6 +1,6 @@
 // FORGE - Service Worker
 
-const CACHE_NAME = 'forge-v2';
+const CACHE_NAME = 'forge-v3';
 const ASSETS = [
     '/',
     '/index.html',

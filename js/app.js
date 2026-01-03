@@ -757,35 +757,59 @@ class ForgeApp {
         document.getElementById('routine-progress-text').textContent = `${completed} / ${total} 完了`;
         document.getElementById('routine-progress-fill').style.width = `${(completed / total) * 100}%`;
 
-        container.innerHTML = this.currentRoutine.exercises.map(exerciseId => {
+        // 部位別にグループ化
+        const groupedExercises = {};
+        this.currentRoutine.exercises.forEach(exerciseId => {
             const exercise = exercises.find(e => e.id === exerciseId);
-            if (!exercise) return '';
+            if (!exercise) return;
 
-            const isCompleted = this.completedRoutineExercises.includes(exerciseId);
-            const lastRecord = Storage.getLastRecord(exerciseId);
-            let lastRecordText = '記録なし';
-            if (lastRecord && lastRecord.sets && lastRecord.sets.length > 0) {
-                const set = lastRecord.sets[0];
-                lastRecordText = `前回: ${set.weight}kg × ${set.reps}回`;
+            const muscleGroup = MUSCLE_GROUPS[exercise.muscle];
+            const category = muscleGroup ? muscleGroup.category : 'その他';
+
+            if (!groupedExercises[category]) {
+                groupedExercises[category] = [];
             }
+            groupedExercises[category].push({ exerciseId, exercise });
+        });
 
-            return `
-                <div class="routine-exercise-run-item ${isCompleted ? 'completed' : ''}" data-id="${exerciseId}">
-                    <div class="exercise-status">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <path d="M5 13l4 4L19 7"/>
+        // カテゴリ順序
+        const categoryOrder = ['肩', '胸', '背中', '腕', '脚', '臀部', '腹', 'その他'];
+
+        let html = '';
+        categoryOrder.forEach(category => {
+            if (!groupedExercises[category]) return;
+
+            html += `<div class="muscle-group-header">${category}</div>`;
+
+            groupedExercises[category].forEach(({ exerciseId, exercise }) => {
+                const isCompleted = this.completedRoutineExercises.includes(exerciseId);
+                const lastRecord = Storage.getLastRecord(exerciseId);
+                let lastRecordText = '記録なし';
+                if (lastRecord && lastRecord.sets && lastRecord.sets.length > 0) {
+                    const set = lastRecord.sets[0];
+                    lastRecordText = `前回: ${set.weight}kg × ${set.reps}回`;
+                }
+
+                html += `
+                    <div class="routine-exercise-run-item ${isCompleted ? 'completed' : ''}" data-id="${exerciseId}">
+                        <div class="exercise-status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <div class="routine-exercise-run-info">
+                            <h4>${exercise.name}</h4>
+                            <span>${lastRecordText}</span>
+                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18l6-6-6-6"/>
                         </svg>
                     </div>
-                    <div class="routine-exercise-run-info">
-                        <h4>${exercise.name}</h4>
-                        <span>${lastRecordText}</span>
-                    </div>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 18l6-6-6-6"/>
-                    </svg>
-                </div>
-            `;
-        }).join('');
+                `;
+            });
+        });
+
+        container.innerHTML = html;
 
         // クリックイベント
         container.querySelectorAll('.routine-exercise-run-item').forEach(item => {
