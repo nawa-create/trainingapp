@@ -878,9 +878,9 @@ textarea {
 }
 
 .input-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin-bottom: 20px;
     position: relative;
 }
@@ -902,17 +902,17 @@ textarea {
 .input-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 12px;
 }
 
 .input-controls input {
     flex: 1;
-    min-width: 50px;
+    min-width: 80px;
     width: 100%;
     text-align: center;
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 600;
-    padding: 12px 4px;
+    padding: 14px 8px;
     border-radius: var(--radius);
     -moz-appearance: textfield;
 }
@@ -925,15 +925,15 @@ textarea {
 
 .adjust-btn {
     flex-shrink: 0;
-    width: 38px;
-    height: 38px;
+    width: 56px;
+    height: 56px;
     background: var(--glass-bg-strong);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-full);
     color: var(--text-primary);
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 300;
     cursor: pointer;
     display: flex;
@@ -943,6 +943,8 @@ textarea {
     box-shadow:
         0 2px 8px var(--glass-shadow),
         inset 0 1px 0 var(--glass-highlight);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .adjust-btn:active {

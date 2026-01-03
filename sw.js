@@ -1,6 +1,6 @@
 // FORGE - Service Worker
 
-const CACHE_NAME = 'forge-v1';
+const CACHE_NAME = 'forge-v2';
 const ASSETS = [
     '/',
     '/index.html',
@@ -9,7 +9,9 @@ const ASSETS = [
     '/js/storage.js',
     '/js/timer.js',
     '/js/app.js',
-    '/manifest.json'
+    '/manifest.json',
+    '/assets/icons/icon-192.jpg',
+    '/assets/icons/icon-512.jpg'
 ];
 
 // インストール時にアセットをキャッシュ
@@ -34,15 +36,28 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// フェッチリクエストをキャッシュから返す（オフライン対応）
+// ネットワーク優先、失敗時はキャッシュから返す（最新版を優先）
 self.addEventListener('fetch', (event) => {
+    // APIリクエストなどはキャッシュしない
+    if (!event.request.url.startsWith(self.location.origin)) {
+        return;
+    }
+
     event.respondWith(
-        caches.match(event.request)
+        fetch(event.request)
             .then(response => {
-                if (response) {
-                    return response;
+                // 成功したらキャッシュを更新
+                if (response.status === 200) {
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, responseClone);
+                    });
                 }
-                return fetch(event.request);
+                return response;
+            })
+            .catch(() => {
+                // ネットワーク失敗時はキャッシュから返す（オフライン対応）
+                return caches.match(event.request);
             })
     );
 });
@@ -59,8 +74,8 @@ self.addEventListener('message', (event) => {
             const timeoutId = setTimeout(() => {
                 self.registration.showNotification(title, {
                     body: body,
-                    icon: '/assets/icons/icon-192.png',
-                    badge: '/assets/icons/icon-192.png',
+                    icon: '/assets/icons/icon-192.jpg',
+                    badge: '/assets/icons/icon-192.jpg',
                     vibrate: [200, 100, 200, 100, 200],
                     tag: 'timer-notification',
                     renotify: true,
