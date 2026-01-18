@@ -10,6 +10,7 @@ class ForgeApp {
         this.selectedMuscleGroup = null;
         this.editingRoutine = null;
         this.routineExercises = [];
+        this.currentChartType = 'weight'; // weight, volume, 1rm
 
         this.init();
     }
@@ -188,6 +189,128 @@ class ForgeApp {
         document.getElementById('stats-exercise-select').addEventListener('change', (e) => {
             this.loadExerciseStats(e.target.value);
         });
+
+        // Chart Type Toggle
+        document.querySelectorAll('.chart-type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.currentChartType = btn.dataset.type;
+                const exerciseId = document.getElementById('stats-exercise-select').value;
+                if (exerciseId) {
+                    this.loadExerciseStats(exerciseId);
+                }
+            });
+        });
+
+        // Volume Calculator
+        document.getElementById('volume-calc-btn').addEventListener('click', () => {
+            this.navigateTo('volume-calc');
+        });
+
+        document.getElementById('compare-btn').addEventListener('click', () => {
+            this.compareVolumes();
+        });
+
+        document.getElementById('target-volume').addEventListener('input', () => {
+            this.generateOptimalSuggestions();
+        });
+    }
+
+    // Volume Calculator - Compare volumes
+    compareVolumes() {
+        const aWeight = parseFloat(document.getElementById('option-a-weight').value) || 0;
+        const aReps = parseInt(document.getElementById('option-a-reps').value) || 0;
+        const aSets = parseInt(document.getElementById('option-a-sets').value) || 1;
+        
+        const bWeight = parseFloat(document.getElementById('option-b-weight').value) || 0;
+        const bReps = parseInt(document.getElementById('option-b-reps').value) || 0;
+        const bSets = parseInt(document.getElementById('option-b-sets').value) || 1;
+
+        const volumeA = aWeight * aReps * aSets;
+        const volumeB = bWeight * bReps * bSets;
+
+        const resultsContainer = document.getElementById('calc-results');
+        
+        if (volumeA === 0 && volumeB === 0) {
+            resultsContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">値を入力してください</p>';
+            return;
+        }
+
+        const winner = volumeA > volumeB ? 'A' : volumeB > volumeA ? 'B' : 'tie';
+        const diff = Math.abs(volumeA - volumeB);
+
+        resultsContainer.innerHTML = `
+            <div class="calc-result-item ${winner === 'A' ? 'winner' : ''}">
+                <span class="result-label">オプション A</span>
+                <span class="result-volume">${volumeA.toLocaleString()} kg${winner === 'A' ? '<span class="result-badge">勝利!</span>' : ''}</span>
+            </div>
+            <div class="calc-result-item ${winner === 'B' ? 'winner' : ''}">
+                <span class="result-label">オプション B</span>
+                <span class="result-volume">${volumeB.toLocaleString()} kg${winner === 'B' ? '<span class="result-badge">勝利!</span>' : ''}</span>
+            </div>
+            ${winner !== 'tie' ? `<p style="text-align: center; color: var(--text-muted); margin-top: 12px;">差: ${diff.toLocaleString()} kg (${((diff / Math.min(volumeA, volumeB)) * 100).toFixed(1)}% 多い)</p>` : '<p style="text-align: center; color: var(--accent); margin-top: 12px;">同じボリューム!</p>'}
+        `;
+    }
+
+    // Generate optimal suggestions based on target volume
+    generateOptimalSuggestions() {
+        const targetVolume = parseInt(document.getElementById('target-volume').value) || 0;
+        const container = document.getElementById('optimal-suggestions');
+
+        if (targetVolume <= 0) {
+            container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">目標ボリュームを入力してください</p>';
+            return;
+        }
+
+        // 様々な組み合わせを計算
+        const suggestions = [];
+        const weights = [40, 50, 60, 70, 80, 90, 100];
+        
+        weights.forEach(weight => {
+            // 3セットで達成する場合
+            const repsNeeded = Math.ceil(targetVolume / (weight * 3));
+            if (repsNeeded >= 4 && repsNeeded <= 15) {
+                const actualVolume = weight * repsNeeded * 3;
+                suggestions.push({
+                    weight,
+                    reps: repsNeeded,
+                    sets: 3,
+                    volume: actualVolume,
+                    diff: actualVolume - targetVolume
+                });
+            }
+            // 4セットで達成する場合
+            const repsNeeded4 = Math.ceil(targetVolume / (weight * 4));
+            if (repsNeeded4 >= 4 && repsNeeded4 <= 12) {
+                const actualVolume = weight * repsNeeded4 * 4;
+                suggestions.push({
+                    weight,
+                    reps: repsNeeded4,
+                    sets: 4,
+                    volume: actualVolume,
+                    diff: actualVolume - targetVolume
+                });
+            }
+        });
+
+        // 目標に近い順にソート
+        suggestions.sort((a, b) => Math.abs(a.diff) - Math.abs(b.diff));
+
+        // 上位5つを表示
+        const topSuggestions = suggestions.slice(0, 5);
+
+        if (topSuggestions.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">適切な組み合わせが見つかりません</p>';
+            return;
+        }
+
+        container.innerHTML = topSuggestions.map((s, i) => `
+            <div class="optimal-item ${i === 0 ? 'recommended' : ''}">
+                <span class="option-text">${s.weight}kg × ${s.reps}回 × ${s.sets}セット</span>
+                <span class="option-volume">${s.volume.toLocaleString()}kg ${s.diff > 0 ? `(+${s.diff})` : s.diff < 0 ? `(${s.diff})` : '✓'}</span>
+            </div>
+        `).join('');
     }
 
     // ==================== Setup ====================
@@ -272,7 +395,25 @@ class ForgeApp {
             case 'settings':
                 this.loadSettingsScreen();
                 break;
+            case 'volume-calc':
+                this.loadVolumeCalcScreen();
+                break;
         }
+    }
+
+    // ==================== Volume Calculator Screen ====================
+    
+    loadVolumeCalcScreen() {
+        // 初期化
+        document.getElementById('target-volume').value = '';
+        document.getElementById('option-a-weight').value = '';
+        document.getElementById('option-a-reps').value = '';
+        document.getElementById('option-a-sets').value = '3';
+        document.getElementById('option-b-weight').value = '';
+        document.getElementById('option-b-reps').value = '';
+        document.getElementById('option-b-sets').value = '3';
+        document.getElementById('calc-results').innerHTML = '';
+        document.getElementById('optimal-suggestions').innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">目標ボリュームを入力してください</p>';
     }
 
     // ==================== Home Screen ====================
@@ -470,23 +611,32 @@ class ForgeApp {
 
     renderCompletedSets() {
         const container = document.getElementById('sets-list');
+        const volumeSummary = document.getElementById('volume-summary');
+        const optimizationSuggestion = document.getElementById('optimization-suggestion');
 
         if (this.currentSets.length === 0) {
             container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">セットを記録してください</p>';
+            volumeSummary.classList.add('hidden');
+            optimizationSuggestion.classList.add('hidden');
             return;
         }
 
-        container.innerHTML = this.currentSets.map((set, index) => `
-            <div class="set-done-item">
-                <div class="set-done-num">${index + 1}</div>
-                <div class="set-done-details">${set.weight}kg × ${set.reps}回</div>
-                <button class="set-done-delete" data-index="${index}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-        `).join('');
+        // 各セットのボリュームを計算して表示
+        container.innerHTML = this.currentSets.map((set, index) => {
+            const setVolume = set.weight * set.reps;
+            return `
+                <div class="set-done-item">
+                    <div class="set-done-num">${index + 1}</div>
+                    <div class="set-done-details">${set.weight}kg × ${set.reps}回</div>
+                    <div class="set-done-volume">= ${setVolume.toLocaleString()}kg</div>
+                    <button class="set-done-delete" data-index="${index}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+        }).join('');
 
         container.querySelectorAll('.set-done-delete').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -494,6 +644,148 @@ class ForgeApp {
                 this.deleteSet(index);
             });
         });
+
+        // ボリュームサマリーを計算・表示
+        this.updateVolumeSummary();
+        
+        // 最適化提案を表示
+        this.updateOptimizationSuggestion();
+    }
+
+    // ボリュームサマリーを更新
+    updateVolumeSummary() {
+        const volumeSummary = document.getElementById('volume-summary');
+        
+        if (this.currentSets.length === 0) {
+            volumeSummary.classList.add('hidden');
+            return;
+        }
+
+        volumeSummary.classList.remove('hidden');
+
+        // 計算
+        const totalVolume = this.currentSets.reduce((sum, set) => sum + (set.weight * set.reps), 0);
+        const maxWeight = Math.max(...this.currentSets.map(s => s.weight));
+        const totalReps = this.currentSets.reduce((sum, set) => sum + set.reps, 0);
+        
+        // 推定1RM (Brzycki式: weight × (36 / (37 - reps)))
+        const bestSet = this.currentSets.reduce((best, set) => {
+            const estimated1RM = set.reps <= 36 ? set.weight * (36 / (37 - set.reps)) : set.weight;
+            return estimated1RM > best.estimated1RM ? { ...set, estimated1RM } : best;
+        }, { estimated1RM: 0 });
+        const estimated1RM = Math.round(bestSet.estimated1RM);
+
+        // 表示を更新
+        document.getElementById('exercise-volume').textContent = `${totalVolume.toLocaleString()} kg`;
+        document.getElementById('max-weight-stat').textContent = `${maxWeight} kg`;
+        document.getElementById('total-reps-stat').textContent = totalReps;
+        document.getElementById('estimated-1rm').textContent = `${estimated1RM} kg`;
+
+        // PR判定
+        this.checkAndDisplayPR(totalVolume, maxWeight, estimated1RM);
+    }
+
+    // PR（自己ベスト）をチェック・表示
+    checkAndDisplayPR(currentVolume, currentMaxWeight, currentEstimated1RM) {
+        if (!this.currentExercise) return;
+
+        const prIndicator = document.getElementById('pr-indicator');
+        const prText = document.getElementById('pr-text');
+        
+        // 過去の記録を取得
+        const history = Storage.getExerciseHistory(this.currentExercise.id, 100);
+        
+        if (history.length === 0) {
+            prIndicator.classList.add('hidden');
+            return;
+        }
+
+        // 過去の最高値を計算
+        let maxHistoryVolume = 0;
+        let maxHistoryWeight = 0;
+        let maxHistory1RM = 0;
+
+        history.forEach(record => {
+            const volume = record.sets.reduce((sum, set) => sum + (set.weight * set.reps), 0);
+            const weight = Math.max(...record.sets.map(s => s.weight));
+            const best1RM = record.sets.reduce((best, set) => {
+                const est = set.reps <= 36 ? set.weight * (36 / (37 - set.reps)) : set.weight;
+                return Math.max(best, est);
+            }, 0);
+            
+            maxHistoryVolume = Math.max(maxHistoryVolume, volume);
+            maxHistoryWeight = Math.max(maxHistoryWeight, weight);
+            maxHistory1RM = Math.max(maxHistory1RM, best1RM);
+        });
+
+        // PR判定
+        const prs = [];
+        if (currentVolume > maxHistoryVolume) {
+            prs.push(`ボリューム: +${(currentVolume - maxHistoryVolume).toLocaleString()}kg`);
+        }
+        if (currentMaxWeight > maxHistoryWeight) {
+            prs.push(`最大重量: +${currentMaxWeight - maxHistoryWeight}kg`);
+        }
+        if (currentEstimated1RM > Math.round(maxHistory1RM)) {
+            prs.push(`推定1RM: +${currentEstimated1RM - Math.round(maxHistory1RM)}kg`);
+        }
+
+        if (prs.length > 0) {
+            prIndicator.classList.remove('hidden');
+            prText.textContent = prs.join(' / ');
+        } else {
+            prIndicator.classList.add('hidden');
+        }
+    }
+
+    // 最適化提案を更新
+    updateOptimizationSuggestion() {
+        const container = document.getElementById('optimization-suggestion');
+        const optionsContainer = document.getElementById('suggestion-options');
+        
+        if (this.currentSets.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+
+        // 直前のセットを基準に提案
+        const lastSet = this.currentSets[this.currentSets.length - 1];
+        const currentVolume = this.currentSets.reduce((sum, set) => sum + (set.weight * set.reps), 0);
+        
+        // 提案オプションを生成
+        const suggestions = [
+            {
+                weight: lastSet.weight,
+                reps: lastSet.reps + 1,
+                label: '回数+1',
+                recommended: false
+            },
+            {
+                weight: lastSet.weight + 2.5,
+                reps: lastSet.reps,
+                label: '重量+2.5kg',
+                recommended: true
+            },
+            {
+                weight: lastSet.weight,
+                reps: lastSet.reps - 2,
+                label: '同重量で継続',
+                recommended: false
+            }
+        ].filter(s => s.reps > 0);
+
+        optionsContainer.innerHTML = suggestions.map(s => {
+            const addedVolume = s.weight * s.reps;
+            const newTotal = currentVolume + addedVolume;
+            return `
+                <div class="suggestion-option ${s.recommended ? 'recommended' : ''}">
+                    <span class="option-text">${s.weight}kg × ${s.reps}回</span>
+                    <span class="option-volume">+${addedVolume.toLocaleString()}kg → ${newTotal.toLocaleString()}kg${s.recommended ? '<span class="option-badge">おすすめ</span>' : ''}</span>
+                </div>
+            `;
+        }).join('');
     }
 
     adjustInput(target, delta) {
@@ -966,11 +1258,19 @@ class ForgeApp {
         // グラフをクリア
         this.clearChart();
         document.getElementById('stats-summary').innerHTML = '';
+        document.getElementById('pr-list').innerHTML = '';
+        
+        // チャートタイプをリセット
+        this.currentChartType = 'weight';
+        document.querySelectorAll('.chart-type-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.type === 'weight');
+        });
     }
 
     loadExerciseStats(exerciseId) {
         if (!exerciseId) {
             this.clearChart();
+            document.getElementById('pr-list').innerHTML = '';
             return;
         }
 
@@ -978,29 +1278,101 @@ class ForgeApp {
 
         if (history.length === 0) {
             this.clearChart();
+            document.getElementById('pr-list').innerHTML = '<p style="color: var(--text-muted);">記録がありません</p>';
             return;
         }
 
         // データを日付順にソート
         const sortedHistory = history.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        // 最大重量の推移
+        // チャートタイプに応じたデータを生成
         const labels = [];
         const data = [];
+        let chartLabel = '';
 
         sortedHistory.forEach(record => {
             const date = new Date(record.date);
             labels.push(`${date.getMonth() + 1}/${date.getDate()}`);
 
-            const maxWeight = Math.max(...record.sets.map(s => s.weight));
-            data.push(maxWeight);
+            switch (this.currentChartType) {
+                case 'volume':
+                    const volume = record.sets.reduce((sum, set) => sum + (set.weight * set.reps), 0);
+                    data.push(volume);
+                    chartLabel = 'ボリューム';
+                    break;
+                case '1rm':
+                    const best1RM = record.sets.reduce((best, set) => {
+                        const est = set.reps <= 36 ? set.weight * (36 / (37 - set.reps)) : set.weight;
+                        return Math.max(best, est);
+                    }, 0);
+                    data.push(Math.round(best1RM));
+                    chartLabel = '推定1RM';
+                    break;
+                case 'weight':
+                default:
+                    const maxWeight = Math.max(...record.sets.map(s => s.weight));
+                    data.push(maxWeight);
+                    chartLabel = '最大重量';
+                    break;
+            }
         });
 
-        this.renderChart(labels, data);
+        this.renderChart(labels, data, chartLabel);
+
+        // 全期間のPRを計算
+        const allHistory = Storage.getExerciseHistory(exerciseId, 1000);
+        let prMaxWeight = 0;
+        let prMaxWeightDate = '';
+        let prMaxVolume = 0;
+        let prMaxVolumeDate = '';
+        let prMax1RM = 0;
+        let prMax1RMDate = '';
+
+        allHistory.forEach(record => {
+            const date = new Date(record.date);
+            const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
+            
+            const maxWeight = Math.max(...record.sets.map(s => s.weight));
+            if (maxWeight > prMaxWeight) {
+                prMaxWeight = maxWeight;
+                prMaxWeightDate = dateStr;
+            }
+            
+            const volume = record.sets.reduce((sum, set) => sum + (set.weight * set.reps), 0);
+            if (volume > prMaxVolume) {
+                prMaxVolume = volume;
+                prMaxVolumeDate = dateStr;
+            }
+            
+            const best1RM = record.sets.reduce((best, set) => {
+                const est = set.reps <= 36 ? set.weight * (36 / (37 - set.reps)) : set.weight;
+                return Math.max(best, est);
+            }, 0);
+            if (best1RM > prMax1RM) {
+                prMax1RM = best1RM;
+                prMax1RMDate = dateStr;
+            }
+        });
+
+        // PR一覧を表示
+        document.getElementById('pr-list').innerHTML = `
+            <div class="pr-item">
+                <span class="pr-item-label">最大重量</span>
+                <span class="pr-item-value">${prMaxWeight} kg<span class="pr-item-date">${prMaxWeightDate}</span></span>
+            </div>
+            <div class="pr-item">
+                <span class="pr-item-label">最大ボリューム</span>
+                <span class="pr-item-value">${prMaxVolume.toLocaleString()} kg<span class="pr-item-date">${prMaxVolumeDate}</span></span>
+            </div>
+            <div class="pr-item">
+                <span class="pr-item-label">推定1RM</span>
+                <span class="pr-item-value">${Math.round(prMax1RM)} kg<span class="pr-item-date">${prMax1RMDate}</span></span>
+            </div>
+        `;
 
         // 統計サマリー
-        const maxWeight = Math.max(...data);
-        const latestWeight = data[data.length - 1];
+        const maxWeight = Math.max(...sortedHistory.flatMap(r => r.sets.map(s => s.weight)));
+        const latestWeight = Math.max(...sortedHistory[sortedHistory.length - 1].sets.map(s => s.weight));
         const totalVolume = sortedHistory.reduce((sum, r) =>
             sum + r.sets.reduce((s, set) => s + set.weight * set.reps, 0), 0);
 
@@ -1024,7 +1396,7 @@ class ForgeApp {
         `;
     }
 
-    renderChart(labels, data) {
+    renderChart(labels, data, chartLabel = '最大重量') {
         const canvas = document.getElementById('progress-chart');
         const ctx = canvas.getContext('2d');
 
