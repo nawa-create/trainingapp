@@ -81,6 +81,12 @@
                         </div>
                         <span>種目を選んで開始</span>
                     </button>
+                    <button id="volume-calc-btn" class="action-btn secondary">
+                        <div class="action-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4V4z"/><path d="M8 8h8M8 12h8M8 16h4"/></svg>
+                        </div>
+                        <span>ボリューム計算機</span>
+                    </button>
                 </div>
 
                 <!-- Stagnation Alerts -->
@@ -232,6 +238,36 @@
                 <div class="sets-done">
                     <h3>完了セット</h3>
                     <div id="sets-list"></div>
+                    <!-- Volume Summary -->
+                    <div id="volume-summary" class="volume-summary hidden">
+                        <div class="volume-total">
+                            <span class="volume-label">種目ボリューム</span>
+                            <span class="volume-value" id="exercise-volume">0 kg</span>
+                        </div>
+                        <div class="volume-details">
+                            <div class="volume-stat">
+                                <span class="stat-label">最大重量</span>
+                                <span class="stat-value" id="max-weight-stat">0 kg</span>
+                            </div>
+                            <div class="volume-stat">
+                                <span class="stat-label">総レップ</span>
+                                <span class="stat-value" id="total-reps-stat">0</span>
+                            </div>
+                            <div class="volume-stat">
+                                <span class="stat-label">推定1RM</span>
+                                <span class="stat-value" id="estimated-1rm">0 kg</span>
+                            </div>
+                        </div>
+                        <div class="pr-indicator hidden" id="pr-indicator">
+                            <span class="pr-badge">🏆 PR達成!</span>
+                            <span class="pr-text" id="pr-text"></span>
+                        </div>
+                    </div>
+                    <!-- Optimization Suggestion -->
+                    <div id="optimization-suggestion" class="optimization-suggestion hidden">
+                        <h4>💡 次セットの提案</h4>
+                        <div class="suggestion-options" id="suggestion-options"></div>
+                    </div>
                 </div>
             </div>
 
@@ -260,10 +296,70 @@
                     <label>種目を選択</label>
                     <select id="stats-exercise-select"></select>
                 </div>
+                <!-- Chart Type Toggle -->
+                <div class="chart-type-toggle">
+                    <button class="chart-type-btn active" data-type="weight">最大重量</button>
+                    <button class="chart-type-btn" data-type="volume">ボリューム</button>
+                    <button class="chart-type-btn" data-type="1rm">推定1RM</button>
+                </div>
                 <div class="chart-container">
                     <canvas id="progress-chart"></canvas>
                 </div>
                 <div class="stats-summary" id="stats-summary"></div>
+                <!-- PR Records -->
+                <div class="pr-records" id="pr-records">
+                    <h3>🏆 自己ベスト</h3>
+                    <div class="pr-list" id="pr-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volume Calculator Screen -->
+        <div id="volume-calc-screen" class="screen">
+            <header class="app-header">
+                <button class="back-btn" data-back="home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h1>ボリューム計算機</h1>
+            </header>
+            <div class="calc-content">
+                <div class="calc-section">
+                    <h3>目標設定</h3>
+                    <div class="calc-input-group">
+                        <label>目標ボリューム (kg)</label>
+                        <input type="number" id="target-volume" placeholder="2000">
+                    </div>
+                </div>
+                <div class="calc-section">
+                    <h3>セット比較</h3>
+                    <div class="comparison-inputs">
+                        <div class="comparison-row">
+                            <span class="option-label">A:</span>
+                            <input type="number" id="option-a-weight" placeholder="重量" class="small-input">
+                            <span>kg ×</span>
+                            <input type="number" id="option-a-reps" placeholder="回数" class="small-input">
+                            <span>回 ×</span>
+                            <input type="number" id="option-a-sets" placeholder="セット" class="small-input">
+                            <span>セット</span>
+                        </div>
+                        <div class="comparison-row">
+                            <span class="option-label">B:</span>
+                            <input type="number" id="option-b-weight" placeholder="重量" class="small-input">
+                            <span>kg ×</span>
+                            <input type="number" id="option-b-reps" placeholder="回数" class="small-input">
+                            <span>回 ×</span>
+                            <input type="number" id="option-b-sets" placeholder="セット" class="small-input">
+                            <span>セット</span>
+                        </div>
+                    </div>
+                    <button id="compare-btn" class="primary-btn">比較する</button>
+                </div>
+                <div class="calc-results" id="calc-results"></div>
+                <div class="calc-section">
+                    <h3>最適セット提案</h3>
+                    <p class="calc-description">目標ボリュームを達成する組み合わせ</p>
+                    <div id="optimal-suggestions"></div>
+                </div>
             </div>
         </div>
 
