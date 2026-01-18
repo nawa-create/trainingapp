@@ -1761,3 +1761,394 @@ textarea {
         padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
 }
+
+/* ==================== Volume Summary ==================== */
+.volume-summary {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.volume-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 12px;
+}
+
+.volume-label {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.volume-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.volume-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.volume-stat {
+    text-align: center;
+}
+
+.volume-stat .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.volume-stat .stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.pr-indicator {
+    margin-top: 12px;
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--radius);
+    text-align: center;
+    animation: prPulse 2s ease-in-out infinite;
+}
+
+@keyframes prPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+    50% { box-shadow: 0 0 20px 5px rgba(255, 215, 0, 0.2); }
+}
+
+.pr-badge {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffd700;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.pr-text {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* ==================== Optimization Suggestion ==================== */
+.optimization-suggestion {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-top: 12px;
+}
+
+.optimization-suggestion h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.suggestion-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.suggestion-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--glass-bg-strong);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+}
+
+.suggestion-option.recommended {
+    border: 1px solid var(--accent);
+    background: rgba(144, 175, 197, 0.1);
+}
+
+.suggestion-option .option-text {
+    color: var(--text);
+}
+
+.suggestion-option .option-volume {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.suggestion-option .option-badge {
+    font-size: 10px;
+    background: var(--accent);
+    color: var(--bg-dark);
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+}
+
+/* ==================== Set Done Item Volume ==================== */
+.set-done-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    box-shadow: 0 4px 12px var(--glass-shadow);
+}
+
+.set-done-volume {
+    font-size: 12px;
+    color: var(--accent);
+    margin-left: auto;
+    margin-right: 8px;
+    font-weight: 500;
+}
+
+/* ==================== Chart Type Toggle ==================== */
+.chart-type-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 4px;
+    background: var(--glass-bg);
+    border-radius: var(--radius);
+}
+
+.chart-type-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chart-type-btn.active {
+    background: var(--accent);
+    color: var(--bg-dark);
+}
+
+/* ==================== PR Records ==================== */
+.pr-records {
+    margin-top: 20px;
+}
+
+.pr-records h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.pr-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pr-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+}
+
+.pr-item-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.pr-item-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffd700;
+}
+
+.pr-item-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: 8px;
+}
+
+/* ==================== Volume Calculator ==================== */
+.calc-content {
+    padding: 16px;
+}
+
+.calc-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.calc-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.calc-input-group {
+    margin-bottom: 12px;
+}
+
+.calc-input-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.calc-input-group input {
+    width: 100%;
+    padding: 12px;
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 16px;
+}
+
+.comparison-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.comparison-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.comparison-row .option-label {
+    font-weight: 600;
+    color: var(--accent);
+    width: 20px;
+}
+
+.comparison-row span {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.small-input {
+    width: 60px;
+    padding: 8px;
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 14px;
+    text-align: center;
+}
+
+.calc-results {
+    margin-bottom: 16px;
+}
+
+.calc-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+}
+
+.calc-result-item.winner {
+    border-color: var(--accent);
+    background: rgba(144, 175, 197, 0.1);
+}
+
+.result-label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.result-volume {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.result-badge {
+    font-size: 11px;
+    background: var(--accent);
+    color: var(--bg-dark);
+    padding: 4px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+}
+
+.calc-description {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+#optimal-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.optimal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--glass-bg-strong);
+    border-radius: var(--radius-sm);
+}
+
+.optimal-item .option-text {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.optimal-item .option-volume {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* Action button secondary style */
+.action-btn.secondary {
+    background: var(--glass-bg);
+    border: 1px solid var(--accent);
+}
+
+.action-btn.secondary .action-icon {
+    background: transparent;
+    border: 1px solid var(--accent);
+}
+
+.action-btn.secondary .action-icon svg {
+    stroke: var(--accent);
+}
